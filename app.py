@@ -180,12 +180,7 @@ with tab1:
         totalcharges = st.number_input("Total Charges ($)", 0.0, 10000.0, 
                                        float(tenure * monthlycharges), 0.1)
     
-    st.markdown("---")
     
-    # TAMBAHKAN TOMBOL INI
-    col_btn1, col_btn2, col_btn3 = st.columns([1, 1, 1])
-    with col_btn2:
-        predict_button = st.button("🔮 Predict Churn", use_container_width=True)
     
     st.markdown("---")
     # Predict button
