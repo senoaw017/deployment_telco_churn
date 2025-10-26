@@ -6,7 +6,7 @@ import plotly.graph_objects as go
 import plotly.express as px
 from sklearn.base import BaseEstimator, TransformerMixin
 
-
+# Custom classes (HARUS ada sebelum load model)
 class NoOutlier(BaseEstimator, TransformerMixin):
     """Custom transformer for outlier handling"""
     def __init__(self):
@@ -45,6 +45,7 @@ def impute_totalcharges(X):
         median_value = 1397.475
         X['totalcharges'].fillna(median_value, inplace=True)
     return X
+
 
 # Page config
 st.set_page_config(
