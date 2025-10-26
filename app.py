@@ -247,6 +247,7 @@ with tab1:
             st.write("Input dtypes:")
             st.write(dummy.dtypes)
 
+
             # Debug info
             with st.expander("🔍 Debug Info (click to expand)"):
                 st.write("**Data to predict:**")
