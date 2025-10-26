@@ -55,54 +55,54 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-# -----------------------------------
-# 🧩 Custom function used in your model
-# -----------------------------------
-# --- 1️⃣ Outlier remover (does nothing but required for loading) ---
-class NoOutlier(BaseEstimator, TransformerMixin):
-    def fit(self, X, y=None): 
-        return self
-    def transform(self, X):    
-        return X
+# # -----------------------------------
+# # 🧩 Custom function used in your model
+# # -----------------------------------
+# # --- 1️⃣ Outlier remover (does nothing but required for loading) ---
+# class NoOutlier(BaseEstimator, TransformerMixin):
+#     def fit(self, X, y=None): 
+#         return self
+#     def transform(self, X):    
+#         return X
 
-# --- 2️⃣ IQR-based Clipping Transformer ---
-class IQRClipper(BaseEstimator, TransformerMixin):
-    def __init__(self, factor=1.5): 
-        self.factor = factor
+# # --- 2️⃣ IQR-based Clipping Transformer ---
+# class IQRClipper(BaseEstimator, TransformerMixin):
+#     def __init__(self, factor=1.5): 
+#         self.factor = factor
     
-    def fit(self, X, y=None):
-        X = np.asarray(X, float)
-        q1 = np.nanpercentile(X, 25, axis=0)
-        q3 = np.nanpercentile(X, 75, axis=0)
-        iqr = q3 - q1
-        self.lower_ = q1 - self.factor * iqr
-        self.upper_ = q3 + self.factor * iqr
-        return self
+#     def fit(self, X, y=None):
+#         X = np.asarray(X, float)
+#         q1 = np.nanpercentile(X, 25, axis=0)
+#         q3 = np.nanpercentile(X, 75, axis=0)
+#         iqr = q3 - q1
+#         self.lower_ = q1 - self.factor * iqr
+#         self.upper_ = q3 + self.factor * iqr
+#         return self
     
-    def transform(self, X): 
-        return np.clip(np.asarray(X, float), self.lower_, self.upper_)
+#     def transform(self, X): 
+#         return np.clip(np.asarray(X, float), self.lower_, self.upper_)
 
-# --- 3️⃣ Quantile Winsorization Transformer ---
-class QuantileWinsorizer(BaseEstimator, TransformerMixin):
-    def __init__(self, lower=0.01, upper=0.99): 
-        self.lower = lower
-        self.upper = upper
+# # --- 3️⃣ Quantile Winsorization Transformer ---
+# class QuantileWinsorizer(BaseEstimator, TransformerMixin):
+#     def __init__(self, lower=0.01, upper=0.99): 
+#         self.lower = lower
+#         self.upper = upper
     
-    def fit(self, X, y=None):
-        X = np.asarray(X, float)
-        self.low_ = np.nanpercentile(X, self.lower * 100, axis=0)
-        self.high_ = np.nanpercentile(X, self.upper * 100, axis=0)
-        return self
+#     def fit(self, X, y=None):
+#         X = np.asarray(X, float)
+#         self.low_ = np.nanpercentile(X, self.lower * 100, axis=0)
+#         self.high_ = np.nanpercentile(X, self.upper * 100, axis=0)
+#         return self
     
-    def transform(self, X): 
-        return np.clip(np.asarray(X, float), self.low_, self.high_)
+#     def transform(self, X): 
+#         return np.clip(np.asarray(X, float), self.low_, self.high_)
 
-# --- 4️⃣ Custom Imputer for TotalCharges ---
-def impute_totalcharges(X):
-    X = X.copy()
-    mask = (X['totalcharges'].isna()) & (X['tenure'] == 0)
-    X.loc[mask, 'totalcharges'] = X.loc[mask, 'monthlycharges']
-    return X
+# # --- 4️⃣ Custom Imputer for TotalCharges ---
+# def impute_totalcharges(X):
+#     X = X.copy()
+#     mask = (X['totalcharges'].isna()) & (X['tenure'] == 0)
+#     X.loc[mask, 'totalcharges'] = X.loc[mask, 'monthlycharges']
+#     return X
 
 
 # Load model
