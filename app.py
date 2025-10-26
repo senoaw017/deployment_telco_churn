@@ -206,45 +206,47 @@ with tab1:
                                        float(tenure * monthlycharges), 0.1, key="total_input")
     
     st.markdown("---")
-    
-    if predict_button and model_loaded:
+        if predict_button and model_loaded:
+        # DEBUG MODE: Tampilkan expected format
+        st.write("### 🔍 Expected Data Format from Training")
+        st.write("Sample dari X_train:")
+        st.dataframe(X_train.head(1).T)
+        st.write("Data types dari X_train:")
+        st.write(X_train.dtypes)
+        
+        st.write("---")
+        st.write("### 📝 Your Input Data")
+        
         try:
-            # METODE PALING AMAN: Gunakan template dari X_train
-            dummy = X_train.iloc[[0]].copy()
-            idx = dummy.index[0]
+            # Buat input data
+            input_dict = {
+                'gender': str(gender),
+                'seniorcitizen': int(senior),
+                'partner': str(partner),
+                'dependents': str(dependents),
+                'tenure': int(tenure),
+                'phoneservice': str(phoneservice),
+                'multiplelines': str(multiplelines),
+                'internetservice': str(internetservice),
+                'onlinesecurity': str(onlinesecurity),
+                'onlinebackup': str(onlinebackup),
+                'deviceprotection': str(deviceprotection),
+                'techsupport': str(techsupport),
+                'streamingtv': str(streamingtv),
+                'streamingmovies': str(streamingmovies),
+                'contract': str(contract),
+                'paperlessbilling': str(paperlessbilling),
+                'paymentmethod': str(paymentmethod),
+                'monthlycharges': float(monthlycharges),
+                'totalcharges': float(totalcharges)
+            }
             
-            # Update dengan input user - PENTING: pastikan format persis sama
-            dummy.at[idx, 'gender'] = str(gender)
-            dummy.at[idx, 'seniorcitizen'] = int(senior)
-            dummy.at[idx, 'partner'] = str(partner)
-            dummy.at[idx, 'dependents'] = str(dependents)
-            dummy.at[idx, 'tenure'] = int(tenure)
-            dummy.at[idx, 'phoneservice'] = str(phoneservice)
-            dummy.at[idx, 'multiplelines'] = str(multiplelines)
-            dummy.at[idx, 'internetservice'] = str(internetservice)
-            dummy.at[idx, 'onlinesecurity'] = str(onlinesecurity)
-            dummy.at[idx, 'onlinebackup'] = str(onlinebackup)
-            dummy.at[idx, 'deviceprotection'] = str(deviceprotection)
-            dummy.at[idx, 'techsupport'] = str(techsupport)
-            dummy.at[idx, 'streamingtv'] = str(streamingtv)
-            dummy.at[idx, 'streamingmovies'] = str(streamingmovies)
-            dummy.at[idx, 'contract'] = str(contract)
-            dummy.at[idx, 'paperlessbilling'] = str(paperlessbilling)
-            dummy.at[idx, 'paymentmethod'] = str(paymentmethod)
-            dummy.at[idx, 'monthlycharges'] = float(monthlycharges)
-            dummy.at[idx, 'totalcharges'] = float(totalcharges)
-            
-            # CRITICAL: Pastikan dtypes match dengan X_train
-            for col in dummy.columns:
-                if col in X_train.columns:
-                    # Force dtype to match training data
-                    if X_train[col].dtype == 'object':
-                        dummy[col] = dummy[col].astype('object')
-                    elif X_train[col].dtype == 'int64':
-                        dummy[col] = dummy[col].astype('int64')
-                    elif X_train[col].dtype == 'float64':
-                        dummy[col] = dummy[col].astype('float64')
-            
+            dummy = pd.DataFrame([input_dict])
+            st.write("Input DataFrame:")
+            st.dataframe(dummy.T)
+            st.write("Input dtypes:")
+            st.write(dummy.dtypes)
+
             # Debug info
             with st.expander("🔍 Debug Info (click to expand)"):
                 st.write("**Data to predict:**")
