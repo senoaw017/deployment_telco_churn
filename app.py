@@ -192,36 +192,39 @@ with tab1:
     
     if predict_button and model_loaded:
         try:
-            # Buat data dictionary dengan nama kolom PERSIS seperti dataset asli
+            # Buat data dictionary
             input_data = {
                 'gender': [str(gender)],
-                'SeniorCitizen': [int(senior)],  # Huruf besar
-                'Partner': [str(partner)],       # Huruf besar
-                'Dependents': [str(dependents)], # Huruf besar
+                'SeniorCitizen': [int(senior)],
+                'Partner': [str(partner)],
+                'Dependents': [str(dependents)],
                 'tenure': [int(tenure)],
-                'PhoneService': [str(phoneservice)],      # Huruf besar
-                'MultipleLines': [str(multiplelines)],    # Huruf besar
-                'InternetService': [str(internetservice)], # Huruf besar
-                'OnlineSecurity': [str(onlinesecurity)],  # Huruf besar
-                'OnlineBackup': [str(onlinebackup)],      # Huruf besar
-                'DeviceProtection': [str(deviceprotection)], # Huruf besar
-                'TechSupport': [str(techsupport)],        # Huruf besar
-                'StreamingTV': [str(streamingtv)],        # Huruf besar
-                'StreamingMovies': [str(streamingmovies)], # Huruf besar
-                'Contract': [str(contract)],              # Huruf besar
-                'PaperlessBilling': [str(paperlessbilling)], # Huruf besar
-                'PaymentMethod': [str(paymentmethod)],    # Huruf besar
-                'MonthlyCharges': [float(monthlycharges)], # Huruf besar
-                'TotalCharges': [float(totalcharges)]     # Huruf besar
+                'PhoneService': [str(phoneservice)],
+                'MultipleLines': [str(multiplelines)],
+                'InternetService': [str(internetservice)],
+                'OnlineSecurity': [str(onlinesecurity)],
+                'OnlineBackup': [str(onlinebackup)],
+                'DeviceProtection': [str(deviceprotection)],
+                'TechSupport': [str(techsupport)],
+                'StreamingTV': [str(streamingtv)],
+                'StreamingMovies': [str(streamingmovies)],
+                'Contract': [str(contract)],
+                'PaperlessBilling': [str(paperlessbilling)],
+                'PaymentMethod': [str(paymentmethod)],
+                'MonthlyCharges': [float(monthlycharges)],
+                'TotalCharges': [float(totalcharges)]
             }
             
             # Buat DataFrame
             dummy = pd.DataFrame(input_data)
             
-            # TIDAK PERLU drop customerid karena tidak ada di input_data
+            # FILTER: Ambil hanya kolom yang ada di X_train (exclude customerID & Churn)
+            available_cols = [col for col in X_train.columns if col in dummy.columns]
+            dummy = dummy[available_cols]
             
-            # Pastikan urutan kolom sesuai X_train
-            dummy = dummy[X_train.columns]
+            # Debug info
+            st.write("✅ Columns in model:", X_train.columns.tolist())
+            st.write("✅ Columns in input:", dummy.columns.tolist())
             
             # Predict
             prediction = model.predict(dummy)[0]
@@ -232,12 +235,12 @@ with tab1:
             
         except Exception as e:
             st.error(f"⚠️ Prediction Error: {str(e)}")
-            st.write("Debug - Expected columns:", X_train.columns.tolist())
-            st.write("Debug - Input columns:", list(input_data.keys()))
+            st.write("Expected columns:", X_train.columns.tolist())
+            st.write("Got columns:", list(input_data.keys()))
             import traceback
             st.code(traceback.format_exc())
             st.stop()
-        st.markdown("---")
+
         st.markdown("## 🎯 Prediction Results")
         
 
