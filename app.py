@@ -107,13 +107,6 @@ def load_train_data():
     columns_to_drop = ['customerID', 'Churn']
     X_train = df.drop(columns_to_drop, axis=1, errors='ignore')
     return X_train
-try:
-    model = load_model()
-    X_train = load_train_data()
-    model_loaded = True
-except Exception as e:
-    model_loaded = False
-    st.error(f"⚠️ Error loading model: {e}")
 
 # Header
 st.markdown('<p class="main-header">📊 Customer Churn Prediction System</p>', unsafe_allow_html=True)
