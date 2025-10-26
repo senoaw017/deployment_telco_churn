@@ -99,14 +99,19 @@ st.markdown("""
 def load_model():
     return joblib.load('churn_model.joblib')
 
+
 @st.cache_data
 def load_train_data():
     df = pd.read_csv('customerchurn.csv')
-    # Drop customerID dan Churn (kolom yang tidak dipakai untuk training)
-    columns_to_drop = ['customerID', 'Churn']
+    
+    # Lowercase semua nama kolom
+    df.columns = df.columns.str.lower()
+    
+    # Drop customerid dan churn
+    columns_to_drop = ['customerid', 'churn']
     X_train = df.drop(columns_to_drop, axis=1, errors='ignore')
+    
     return X_train
-
 try:
     model = load_model()
     X_train = load_train_data()
