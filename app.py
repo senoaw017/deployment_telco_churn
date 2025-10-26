@@ -6,9 +6,11 @@ import plotly.graph_objects as go
 import plotly.express as px
 from sklearn.base import BaseEstimator, TransformerMixin
 
-# Custom classes (HARUS ada sebelum load model)
 class NoOutlier(BaseEstimator, TransformerMixin):
-    """Custom transformer for outlier handling"""
+    """
+    Custom transformer for outlier handling.
+    This is a placeholder that doesn't modify the data.
+    """
     def __init__(self):
         pass
     
@@ -21,31 +23,20 @@ class NoOutlier(BaseEstimator, TransformerMixin):
     def fit_transform(self, X, y=None):
         return X
 
-class CustomImputer(BaseEstimator, TransformerMixin):
-    """Custom imputer for totalcharges column"""
-    def __init__(self, median_value=1397.475):
-        self.median_value = median_value
-    
-    def fit(self, X, y=None):
-        return self
-    
-    def transform(self, X):
-        X = X.copy()
-        if 'totalcharges' in X.columns:
-            X['totalcharges'] = pd.to_numeric(X['totalcharges'], errors='coerce')
-            X['totalcharges'].fillna(self.median_value, inplace=True)
-        return X
-
-# Custom function (HARUS ada untuk backward compatibility)
+# Custom imputer function (required for model loading)
 def impute_totalcharges(X):
-    """Custom imputer function for totalcharges"""
+    """
+    Custom imputer for totalcharges column.
+    Imputes missing values with median from the training data.
+    """
     X = X.copy()
     if 'totalcharges' in X.columns:
+        # Replace empty strings with NaN
         X['totalcharges'] = pd.to_numeric(X['totalcharges'], errors='coerce')
-        median_value = 1397.475
+        # Impute with median (you can adjust this value based on your training data)
+        median_value = 1397.475  # Median from training data
         X['totalcharges'].fillna(median_value, inplace=True)
     return X
-
 
 # Page config
 st.set_page_config(
@@ -191,56 +182,42 @@ with tab1:
     
     st.markdown("---")
     
-   if predict_button and model_loaded:
-        try:
-            # Create dummy data dari template
-            dummy = X_train.iloc[[0]].copy()
-            
-            # PENTING: Pastikan semua kolom dalam lowercase
-            dummy.at[dummy.index[0], 'gender'] = str(gender).strip()
-            dummy.at[dummy.index[0], 'seniorcitizen'] = int(senior)
-            dummy.at[dummy.index[0], 'partner'] = str(partner).strip()
-            dummy.at[dummy.index[0], 'dependents'] = str(dependents).strip()
-            dummy.at[dummy.index[0], 'tenure'] = int(tenure)
-            dummy.at[dummy.index[0], 'phoneservice'] = str(phoneservice).strip()
-            dummy.at[dummy.index[0], 'multiplelines'] = str(multiplelines).strip()
-            dummy.at[dummy.index[0], 'internetservice'] = str(internetservice).strip()
-            dummy.at[dummy.index[0], 'onlinesecurity'] = str(onlinesecurity).strip()
-            dummy.at[dummy.index[0], 'onlinebackup'] = str(onlinebackup).strip()
-            dummy.at[dummy.index[0], 'deviceprotection'] = str(deviceprotection).strip()
-            dummy.at[dummy.index[0], 'techsupport'] = str(techsupport).strip()
-            dummy.at[dummy.index[0], 'streamingtv'] = str(streamingtv).strip()
-            dummy.at[dummy.index[0], 'streamingmovies'] = str(streamingmovies).strip()
-            dummy.at[dummy.index[0], 'contract'] = str(contract).strip()
-            dummy.at[dummy.index[0], 'paperlessbilling'] = str(paperlessbilling).strip()
-            dummy.at[dummy.index[0], 'paymentmethod'] = str(paymentmethod).strip()
-            dummy.at[dummy.index[0], 'monthlycharges'] = float(monthlycharges)
-            dummy.at[dummy.index[0], 'totalcharges'] = float(totalcharges)
-            
-            # Pastikan tidak ada missing values
-            dummy = dummy.fillna(0)
-            
-            # Convert semua object columns ke string
-            for col in dummy.select_dtypes(include=['object']).columns:
-                dummy[col] = dummy[col].astype(str)
-            
-            # Predict
-            prediction = model.predict(dummy)[0]
-            probability = model.predict_proba(dummy)[0]
-            
-            churn_prob = probability[1]
-            no_churn_prob = probability[0]
-            
-        except Exception as e:
-            st.error(f"⚠️ Prediction Error: {str(e)}")
-            st.error("Debug Info:")
-            st.write("Dummy data types:", dummy.dtypes)
-            st.write("Dummy data sample:", dummy.head())
-            st.write("Missing values:", dummy.isnull().sum())
-            st.stop()
+    # Predict button
+    col_btn1, col_btn2, col_btn3 = st.columns([1, 1, 1])
+    with col_btn2:
+        predict_button = st.button("🔮 Predict Churn", use_container_width=True)
+    
+    if predict_button and model_loaded:
+        # Create dummy data
+        dummy = X_train.iloc[[0]].copy()
         
-        st.markdown("---")
-        st.markdown("## 🎯 Prediction Results")
+        dummy.at[dummy.index[0], 'gender'] = gender
+        dummy.at[dummy.index[0], 'seniorcitizen'] = senior
+        dummy.at[dummy.index[0], 'partner'] = partner
+        dummy.at[dummy.index[0], 'dependents'] = dependents
+        dummy.at[dummy.index[0], 'tenure'] = tenure
+        dummy.at[dummy.index[0], 'phoneservice'] = phoneservice
+        dummy.at[dummy.index[0], 'multiplelines'] = multiplelines
+        dummy.at[dummy.index[0], 'internetservice'] = internetservice
+        dummy.at[dummy.index[0], 'onlinesecurity'] = onlinesecurity
+        dummy.at[dummy.index[0], 'onlinebackup'] = onlinebackup
+        dummy.at[dummy.index[0], 'deviceprotection'] = deviceprotection
+        dummy.at[dummy.index[0], 'techsupport'] = techsupport
+        dummy.at[dummy.index[0], 'streamingtv'] = streamingtv
+        dummy.at[dummy.index[0], 'streamingmovies'] = streamingmovies
+        dummy.at[dummy.index[0], 'contract'] = contract
+        dummy.at[dummy.index[0], 'paperlessbilling'] = paperlessbilling
+        dummy.at[dummy.index[0], 'paymentmethod'] = paymentmethod
+        dummy.at[dummy.index[0], 'monthlycharges'] = monthlycharges
+        dummy.at[dummy.index[0], 'totalcharges'] = totalcharges
+        
+        # Predict
+        prediction = model.predict(dummy)[0]
+        probability = model.predict_proba(dummy)[0]
+        
+        churn_prob = probability[1]
+        no_churn_prob = probability[0]
+        
         st.markdown("---")
         st.markdown("## 🎯 Prediction Results")
         
