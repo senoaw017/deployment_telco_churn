@@ -87,10 +87,19 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # Load model
-@st.cache_resource
-def load_model():
-    return joblib.load('churn_model.joblib')
-
+try:
+    model = load_model()
+    X_train = load_train_data()
+    
+    # DEBUG: Print kolom yang diharapkan
+    st.sidebar.info(f"Model expects {len(X_train.columns)} features")
+    with st.sidebar.expander("Show feature names"):
+        st.write(X_train.columns.tolist())
+    
+    model_loaded = True
+except Exception as e:
+    model_loaded = False
+    st.error(f"⚠️ Error loading model: {e}")
 @st.cache_data
 def load_train_data():
     df = pd.read_csv('customerchurn.csv')
