@@ -5,6 +5,28 @@ import joblib
 import plotly.graph_objects as go
 import plotly.express as px
 
+# Custom imputer function (required for model loading)
+def impute_totalcharges(X):
+    """
+    Custom imputer for totalcharges column.
+    Imputes missing values with median from the training data.
+    """
+    X = X.copy()
+    if 'totalcharges' in X.columns:
+        # Replace empty strings with NaN
+        X['totalcharges'] = pd.to_numeric(X['totalcharges'], errors='coerce')
+        # Impute with median (you can adjust this value based on your training data)
+        median_value = 1397.475  # Median from training data
+        X['totalcharges'].fillna(median_value, inplace=True)
+    return X
+
+# Page config
+st.set_page_config(
+    page_title="Customer Churn Predictor",
+    page_icon="📊",
+    layout="wide"
+)
+
 # Page config
 st.set_page_config(
     page_title="Customer Churn Predictor",
