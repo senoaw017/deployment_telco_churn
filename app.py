@@ -189,34 +189,36 @@ with tab1:
     
     if predict_button and model_loaded:
         try:
-            # Buat data dictionary
-            input_data = {
-                'gender': [str(gender)],
-                'seniorcitizen': [int(senior)],
-                'partner': [str(partner)],
-                'dependents': [str(dependents)],
-                'tenure': [int(tenure)],
-                'phoneservice': [str(phoneservice)],
-                'multiplelines': [str(multiplelines)],
-                'internetservice': [str(internetservice)],
-                'onlinesecurity': [str(onlinesecurity)],
-                'onlinebackup': [str(onlinebackup)],
-                'deviceprotection': [str(deviceprotection)],
-                'techsupport': [str(techsupport)],
-                'streamingtv': [str(streamingtv)],
-                'streamingmovies': [str(streamingmovies)],
-                'contract': [str(contract)],
-                'paperlessbilling': [str(paperlessbilling)],
-                'paymentmethod': [str(paymentmethod)],
-                'monthlycharges': [float(monthlycharges)],
-                'totalcharges': [float(totalcharges)]
-            }
+            # Create dummy data dari template
+            dummy = X_train.iloc[[0]].copy()
             
-            # Buat DataFrame
-            dummy = pd.DataFrame(input_data)
+            # PENTING: Pastikan semua kolom dalam lowercase
+            dummy.at[dummy.index[0], 'gender'] = str(gender).strip()
+            dummy.at[dummy.index[0], 'seniorcitizen'] = int(senior)
+            dummy.at[dummy.index[0], 'partner'] = str(partner).strip()
+            dummy.at[dummy.index[0], 'dependents'] = str(dependents).strip()
+            dummy.at[dummy.index[0], 'tenure'] = int(tenure)
+            dummy.at[dummy.index[0], 'phoneservice'] = str(phoneservice).strip()
+            dummy.at[dummy.index[0], 'multiplelines'] = str(multiplelines).strip()
+            dummy.at[dummy.index[0], 'internetservice'] = str(internetservice).strip()
+            dummy.at[dummy.index[0], 'onlinesecurity'] = str(onlinesecurity).strip()
+            dummy.at[dummy.index[0], 'onlinebackup'] = str(onlinebackup).strip()
+            dummy.at[dummy.index[0], 'deviceprotection'] = str(deviceprotection).strip()
+            dummy.at[dummy.index[0], 'techsupport'] = str(techsupport).strip()
+            dummy.at[dummy.index[0], 'streamingtv'] = str(streamingtv).strip()
+            dummy.at[dummy.index[0], 'streamingmovies'] = str(streamingmovies).strip()
+            dummy.at[dummy.index[0], 'contract'] = str(contract).strip()
+            dummy.at[dummy.index[0], 'paperlessbilling'] = str(paperlessbilling).strip()
+            dummy.at[dummy.index[0], 'paymentmethod'] = str(paymentmethod).strip()
+            dummy.at[dummy.index[0], 'monthlycharges'] = float(monthlycharges)
+            dummy.at[dummy.index[0], 'totalcharges'] = float(totalcharges)
             
-            # Reorder columns sesuai X_train
-            dummy = dummy[X_train.columns]
+            # Pastikan tidak ada missing values
+            dummy = dummy.fillna(0)
+            
+            # Convert semua object columns ke string
+            for col in dummy.select_dtypes(include=['object']).columns:
+                dummy[col] = dummy[col].astype(str)
             
             # Predict
             prediction = model.predict(dummy)[0]
@@ -226,12 +228,15 @@ with tab1:
             no_churn_prob = probability[0]
             
         except Exception as e:
-            st.error(f"⚠️ Error: {str(e)}")
-            import traceback
-            st.code(traceback.format_exc())
+            st.error(f"⚠️ Prediction Error: {str(e)}")
+            st.error("Debug Info:")
+            st.write("Dummy data types:", dummy.dtypes)
+            st.write("Dummy data sample:", dummy.head())
+            st.write("Missing values:", dummy.isnull().sum())
             st.stop()
-
         
+        st.markdown("---")
+        st.markdown("## 🎯 Prediction Results")
         # Predict
         prediction = model.predict(dummy)[0]
         probability = model.predict_proba(dummy)[0]
