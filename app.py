@@ -182,6 +182,16 @@ with tab1:
     
     st.markdown("---")
     
+    # TAMBAHKAN TOMBOL INI
+    col_btn1, col_btn2, col_btn3 = st.columns([1, 1, 1])
+    with col_btn2:
+        predict_button = st.button("🔮 Predict Churn", use_container_width=True)
+    
+    st.markdown("---")
+    # Predict button
+    col_btn1, col_btn2, col_btn3 = st.columns([1, 1, 1])
+    with col_btn2:
+        predict_button = st.button("🔮 Predict Churn", use_container_width=True)
     if predict_button and model_loaded:
         try:
             # Buat data dictionary (TANPA customerid)
