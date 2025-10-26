@@ -253,6 +253,7 @@ with tab1:
             st.code(traceback.format_exc())
             st.stop()
 
+
         st.markdown("## 🎯 Prediction Results")
         
 
