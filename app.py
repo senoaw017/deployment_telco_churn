@@ -94,9 +94,10 @@ def load_model():
 @st.cache_data
 def load_train_data():
     df = pd.read_csv('customerchurn.csv')
-    X_train = df.drop(['churn', 'customerid'], axis=1, errors='ignore')
+    # Drop customerID dan Churn
+    columns_to_drop = ['customerID', 'Churn']
+    X_train = df.drop(columns_to_drop, axis=1, errors='ignore')
     return X_train
-
 try:
     model = load_model()
     X_train = load_train_data()
