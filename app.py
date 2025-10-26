@@ -4,6 +4,24 @@ import numpy as np
 import joblib
 import plotly.graph_objects as go
 import plotly.express as px
+from sklearn.base import BaseEstimator, TransformerMixin
+
+class NoOutlier(BaseEstimator, TransformerMixin):
+    """
+    Custom transformer for outlier handling.
+    This is a placeholder that doesn't modify the data.
+    """
+    def __init__(self):
+        pass
+    
+    def fit(self, X, y=None):
+        return self
+    
+    def transform(self, X):
+        return X
+    
+    def fit_transform(self, X, y=None):
+        return X
 
 # Custom imputer function (required for model loading)
 def impute_totalcharges(X):
@@ -19,6 +37,8 @@ def impute_totalcharges(X):
         median_value = 1397.475  # Median from training data
         X['totalcharges'].fillna(median_value, inplace=True)
     return X
+
+
 
 # Page config
 st.set_page_config(
