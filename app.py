@@ -191,41 +191,49 @@ with tab1:
     
     st.markdown("---")
     
-    # Predict button
-    col_btn1, col_btn2, col_btn3 = st.columns([1, 1, 1])
-    with col_btn2:
-        predict_button = st.button("🔮 Predict Churn", use_container_width=True)
-    
     if predict_button and model_loaded:
-        # Create dummy data
-        dummy = X_train.iloc[[0]].copy()
-        
-        dummy.at[dummy.index[0], 'gender'] = gender
-        dummy.at[dummy.index[0], 'seniorcitizen'] = senior
-        dummy.at[dummy.index[0], 'partner'] = partner
-        dummy.at[dummy.index[0], 'dependents'] = dependents
-        dummy.at[dummy.index[0], 'tenure'] = tenure
-        dummy.at[dummy.index[0], 'phoneservice'] = phoneservice
-        dummy.at[dummy.index[0], 'multiplelines'] = multiplelines
-        dummy.at[dummy.index[0], 'internetservice'] = internetservice
-        dummy.at[dummy.index[0], 'onlinesecurity'] = onlinesecurity
-        dummy.at[dummy.index[0], 'onlinebackup'] = onlinebackup
-        dummy.at[dummy.index[0], 'deviceprotection'] = deviceprotection
-        dummy.at[dummy.index[0], 'techsupport'] = techsupport
-        dummy.at[dummy.index[0], 'streamingtv'] = streamingtv
-        dummy.at[dummy.index[0], 'streamingmovies'] = streamingmovies
-        dummy.at[dummy.index[0], 'contract'] = contract
-        dummy.at[dummy.index[0], 'paperlessbilling'] = paperlessbilling
-        dummy.at[dummy.index[0], 'paymentmethod'] = paymentmethod
-        dummy.at[dummy.index[0], 'monthlycharges'] = monthlycharges
-        dummy.at[dummy.index[0], 'totalcharges'] = totalcharges
-        
-        # Predict
-        prediction = model.predict(dummy)[0]
-        probability = model.predict_proba(dummy)[0]
-        
-        churn_prob = probability[1]
-        no_churn_prob = probability[0]
+        try:
+            # Buat data dictionary
+            input_data = {
+                'gender': [str(gender)],
+                'seniorcitizen': [int(senior)],
+                'partner': [str(partner)],
+                'dependents': [str(dependents)],
+                'tenure': [int(tenure)],
+                'phoneservice': [str(phoneservice)],
+                'multiplelines': [str(multiplelines)],
+                'internetservice': [str(internetservice)],
+                'onlinesecurity': [str(onlinesecurity)],
+                'onlinebackup': [str(onlinebackup)],
+                'deviceprotection': [str(deviceprotection)],
+                'techsupport': [str(techsupport)],
+                'streamingtv': [str(streamingtv)],
+                'streamingmovies': [str(streamingmovies)],
+                'contract': [str(contract)],
+                'paperlessbilling': [str(paperlessbilling)],
+                'paymentmethod': [str(paymentmethod)],
+                'monthlycharges': [float(monthlycharges)],
+                'totalcharges': [float(totalcharges)]
+            }
+            
+            # Buat DataFrame
+            dummy = pd.DataFrame(input_data)
+            
+            # Reorder columns sesuai X_train
+            dummy = dummy[X_train.columns]
+            
+            # Predict
+            prediction = model.predict(dummy)[0]
+            probability = model.predict_proba(dummy)[0]
+            
+            churn_prob = probability[1]
+            no_churn_prob = probability[0]
+            
+        except Exception as e:
+            st.error(f"⚠️ Error: {str(e)}")
+            import traceback
+            st.code(traceback.format_exc())
+            st.stop()
         
         st.markdown("---")
         st.markdown("## 🎯 Prediction Results")
