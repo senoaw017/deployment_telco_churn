@@ -187,45 +187,40 @@ with tab1:
     col_btn1, col_btn2, col_btn3 = st.columns([1, 1, 1])
     with col_btn2:
         predict_button = st.button("🔮 Predict Churn", use_container_width=True)
+
+    
     if predict_button and model_loaded:
         try:
-            # Buat data dictionary (TANPA customerid)
+            # Buat data dictionary dengan nama kolom PERSIS seperti dataset asli
             input_data = {
                 'gender': [str(gender)],
-                'seniorcitizen': [int(senior)],
-                'partner': [str(partner)],
-                'dependents': [str(dependents)],
+                'SeniorCitizen': [int(senior)],  # Huruf besar
+                'Partner': [str(partner)],       # Huruf besar
+                'Dependents': [str(dependents)], # Huruf besar
                 'tenure': [int(tenure)],
-                'phoneservice': [str(phoneservice)],
-                'multiplelines': [str(multiplelines)],
-                'internetservice': [str(internetservice)],
-                'onlinesecurity': [str(onlinesecurity)],
-                'onlinebackup': [str(onlinebackup)],
-                'deviceprotection': [str(deviceprotection)],
-                'techsupport': [str(techsupport)],
-                'streamingtv': [str(streamingtv)],
-                'streamingmovies': [str(streamingmovies)],
-                'contract': [str(contract)],
-                'paperlessbilling': [str(paperlessbilling)],
-                'paymentmethod': [str(paymentmethod)],
-                'monthlycharges': [float(monthlycharges)],
-                'totalcharges': [float(totalcharges)]
+                'PhoneService': [str(phoneservice)],      # Huruf besar
+                'MultipleLines': [str(multiplelines)],    # Huruf besar
+                'InternetService': [str(internetservice)], # Huruf besar
+                'OnlineSecurity': [str(onlinesecurity)],  # Huruf besar
+                'OnlineBackup': [str(onlinebackup)],      # Huruf besar
+                'DeviceProtection': [str(deviceprotection)], # Huruf besar
+                'TechSupport': [str(techsupport)],        # Huruf besar
+                'StreamingTV': [str(streamingtv)],        # Huruf besar
+                'StreamingMovies': [str(streamingmovies)], # Huruf besar
+                'Contract': [str(contract)],              # Huruf besar
+                'PaperlessBilling': [str(paperlessbilling)], # Huruf besar
+                'PaymentMethod': [str(paymentmethod)],    # Huruf besar
+                'MonthlyCharges': [float(monthlycharges)], # Huruf besar
+                'TotalCharges': [float(totalcharges)]     # Huruf besar
             }
             
             # Buat DataFrame
             dummy = pd.DataFrame(input_data)
             
-            # PENTING: Drop customerid jika ada
-            if 'customerid' in dummy.columns:
-                dummy = dummy.drop('customerid', axis=1)
+            # TIDAK PERLU drop customerid karena tidak ada di input_data
             
-            # Pastikan urutan kolom sesuai X_train (tanpa customerid)
-            train_cols = [col for col in X_train.columns if col != 'customerid']
-            dummy = dummy[train_cols]
-            
-            # Debug info
-            st.write("Debug - Columns being used:", dummy.columns.tolist())
-            st.write("Debug - Data types:", dummy.dtypes.to_dict())
+            # Pastikan urutan kolom sesuai X_train
+            dummy = dummy[X_train.columns]
             
             # Predict
             prediction = model.predict(dummy)[0]
@@ -236,10 +231,11 @@ with tab1:
             
         except Exception as e:
             st.error(f"⚠️ Prediction Error: {str(e)}")
+            st.write("Debug - Expected columns:", X_train.columns.tolist())
+            st.write("Debug - Input columns:", list(input_data.keys()))
             import traceback
             st.code(traceback.format_exc())
             st.stop()
-        
         st.markdown("---")
         st.markdown("## 🎯 Prediction Results")
         
