@@ -6,11 +6,9 @@ import plotly.graph_objects as go
 import plotly.express as px
 from sklearn.base import BaseEstimator, TransformerMixin
 
+
 class NoOutlier(BaseEstimator, TransformerMixin):
-    """
-    Custom transformer for outlier handling.
-    This is a placeholder that doesn't modify the data.
-    """
+    """Custom transformer for outlier handling"""
     def __init__(self):
         pass
     
@@ -23,22 +21,30 @@ class NoOutlier(BaseEstimator, TransformerMixin):
     def fit_transform(self, X, y=None):
         return X
 
-# Custom imputer function (required for model loading)
+class CustomImputer(BaseEstimator, TransformerMixin):
+    """Custom imputer for totalcharges column"""
+    def __init__(self, median_value=1397.475):
+        self.median_value = median_value
+    
+    def fit(self, X, y=None):
+        return self
+    
+    def transform(self, X):
+        X = X.copy()
+        if 'totalcharges' in X.columns:
+            X['totalcharges'] = pd.to_numeric(X['totalcharges'], errors='coerce')
+            X['totalcharges'].fillna(self.median_value, inplace=True)
+        return X
+
+# Custom function (HARUS ada untuk backward compatibility)
 def impute_totalcharges(X):
-    """
-    Custom imputer for totalcharges column.
-    Imputes missing values with median from the training data.
-    """
+    """Custom imputer function for totalcharges"""
     X = X.copy()
     if 'totalcharges' in X.columns:
-        # Replace empty strings with NaN
         X['totalcharges'] = pd.to_numeric(X['totalcharges'], errors='coerce')
-        # Impute with median (you can adjust this value based on your training data)
-        median_value = 1397.475  # Median from training data
+        median_value = 1397.475
         X['totalcharges'].fillna(median_value, inplace=True)
     return X
-
-
 
 # Page config
 st.set_page_config(
