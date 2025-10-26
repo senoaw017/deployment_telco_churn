@@ -208,28 +208,28 @@ with tab1:
     if predict_button and model_loaded:
         try:
             # Buat data dictionary dengan nama kolom PERSIS seperti dataset asli
+            # Buat data dictionary dengan nama kolom LOWERCASE (sesuai training)
             input_data = {
                 'gender': [str(gender)],
-                'SeniorCitizen': [int(senior)],
-                'Partner': [str(partner)],
-                'Dependents': [str(dependents)],
+                'seniorcitizen': [int(senior)],           # lowercase
+                'partner': [str(partner)],                # lowercase
+                'dependents': [str(dependents)],          # lowercase
                 'tenure': [int(tenure)],
-                'PhoneService': [str(phoneservice)],
-                'MultipleLines': [str(multiplelines)],
-                'InternetService': [str(internetservice)],
-                'OnlineSecurity': [str(onlinesecurity)],
-                'OnlineBackup': [str(onlinebackup)],
-                'DeviceProtection': [str(deviceprotection)],
-                'TechSupport': [str(techsupport)],
-                'StreamingTV': [str(streamingtv)],
-                'StreamingMovies': [str(streamingmovies)],
-                'Contract': [str(contract)],
-                'PaperlessBilling': [str(paperlessbilling)],
-                'PaymentMethod': [str(paymentmethod)],
-                'MonthlyCharges': [float(monthlycharges)],
-                'TotalCharges': [float(totalcharges)]
+                'phoneservice': [str(phoneservice)],      # lowercase
+                'multiplelines': [str(multiplelines)],    # lowercase
+                'internetservice': [str(internetservice)], # lowercase
+                'onlinesecurity': [str(onlinesecurity)],  # lowercase
+                'onlinebackup': [str(onlinebackup)],      # lowercase
+                'deviceprotection': [str(deviceprotection)], # lowercase
+                'techsupport': [str(techsupport)],        # lowercase
+                'streamingtv': [str(streamingtv)],        # lowercase
+                'streamingmovies': [str(streamingmovies)], # lowercase
+                'contract': [str(contract)],              # lowercase
+                'paperlessbilling': [str(paperlessbilling)], # lowercase
+                'paymentmethod': [str(paymentmethod)],    # lowercase
+                'monthlycharges': [float(monthlycharges)], # lowercase
+                'totalcharges': [float(totalcharges)]     # lowercase
             }
-            
             # Buat DataFrame
             dummy = pd.DataFrame(input_data)
             
