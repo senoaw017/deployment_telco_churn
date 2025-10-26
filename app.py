@@ -207,49 +207,56 @@ with tab1:
     
     st.markdown("---")
     
-    # Predict button
-    col_btn1, col_btn2, col_btn3 = st.columns([1, 1, 1])
-    with col_btn2:
-        predict_button = st.button("🔮 Predict Churn", key="predict_btn", use_container_width=True)
-    
     if predict_button and model_loaded:
         try:
-            # Method 1: Gunakan template dari X_train (PALING AMAN)
+            # METODE PALING AMAN: Gunakan template dari X_train
             dummy = X_train.iloc[[0]].copy()
             idx = dummy.index[0]
             
-            # Update dengan input user
-            dummy.at[idx, 'gender'] = str(gender).strip()
+            # Update dengan input user - PENTING: pastikan format persis sama
+            dummy.at[idx, 'gender'] = str(gender)
             dummy.at[idx, 'seniorcitizen'] = int(senior)
-            dummy.at[idx, 'partner'] = str(partner).strip()
-            dummy.at[idx, 'dependents'] = str(dependents).strip()
+            dummy.at[idx, 'partner'] = str(partner)
+            dummy.at[idx, 'dependents'] = str(dependents)
             dummy.at[idx, 'tenure'] = int(tenure)
-            dummy.at[idx, 'phoneservice'] = str(phoneservice).strip()
-            dummy.at[idx, 'multiplelines'] = str(multiplelines).strip()
-            dummy.at[idx, 'internetservice'] = str(internetservice).strip()
-            dummy.at[idx, 'onlinesecurity'] = str(onlinesecurity).strip()
-            dummy.at[idx, 'onlinebackup'] = str(onlinebackup).strip()
-            dummy.at[idx, 'deviceprotection'] = str(deviceprotection).strip()
-            dummy.at[idx, 'techsupport'] = str(techsupport).strip()
-            dummy.at[idx, 'streamingtv'] = str(streamingtv).strip()
-            dummy.at[idx, 'streamingmovies'] = str(streamingmovies).strip()
-            dummy.at[idx, 'contract'] = str(contract).strip()
-            dummy.at[idx, 'paperlessbilling'] = str(paperlessbilling).strip()
-            dummy.at[idx, 'paymentmethod'] = str(paymentmethod).strip()
+            dummy.at[idx, 'phoneservice'] = str(phoneservice)
+            dummy.at[idx, 'multiplelines'] = str(multiplelines)
+            dummy.at[idx, 'internetservice'] = str(internetservice)
+            dummy.at[idx, 'onlinesecurity'] = str(onlinesecurity)
+            dummy.at[idx, 'onlinebackup'] = str(onlinebackup)
+            dummy.at[idx, 'deviceprotection'] = str(deviceprotection)
+            dummy.at[idx, 'techsupport'] = str(techsupport)
+            dummy.at[idx, 'streamingtv'] = str(streamingtv)
+            dummy.at[idx, 'streamingmovies'] = str(streamingmovies)
+            dummy.at[idx, 'contract'] = str(contract)
+            dummy.at[idx, 'paperlessbilling'] = str(paperlessbilling)
+            dummy.at[idx, 'paymentmethod'] = str(paymentmethod)
             dummy.at[idx, 'monthlycharges'] = float(monthlycharges)
             dummy.at[idx, 'totalcharges'] = float(totalcharges)
+            
+            # CRITICAL: Pastikan dtypes match dengan X_train
+            for col in dummy.columns:
+                if col in X_train.columns:
+                    # Force dtype to match training data
+                    if X_train[col].dtype == 'object':
+                        dummy[col] = dummy[col].astype('object')
+                    elif X_train[col].dtype == 'int64':
+                        dummy[col] = dummy[col].astype('int64')
+                    elif X_train[col].dtype == 'float64':
+                        dummy[col] = dummy[col].astype('float64')
             
             # Debug info
             with st.expander("🔍 Debug Info (click to expand)"):
                 st.write("**Data to predict:**")
-                st.dataframe(dummy)
-                st.write("**Data types:**")
-                st.write(dummy.dtypes)
-            
-            # Predict
-            prediction = model.predict(dummy)[0]
-            probability = model.predict_proba(dummy)[0]
-            
+                st.dataframe(dummy.T)
+                st.write("**Data types comparison:**")
+                comparison = pd.DataFrame({
+                    'Training dtype': X_train.dtypes,
+                    'Input dtype': dummy.dtypes
+                })
+                st.dataframe(comparison)
+                st.write("**Are dtypes matching?**", (X_train.dtypes == dummy.dtypes).all())
+
             churn_prob = probability[1]
             no_churn_prob = probability[0]
             
