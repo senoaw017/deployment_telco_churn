@@ -212,34 +212,31 @@ with tab1:
     
     if predict_button and model_loaded:
         try:
-            # Buat data dictionary dengan nama kolom PERSIS seperti dataset asli
-            # Buat data dictionary dengan nama kolom LOWERCASE (sesuai training)
-            input_data = {
-                'gender': [str(gender)],
-                'seniorcitizen': [int(senior)],           # lowercase
-                'partner': [str(partner)],                # lowercase
-                'dependents': [str(dependents)],          # lowercase
-                'tenure': [int(tenure)],
-                'phoneservice': [str(phoneservice)],      # lowercase
-                'multiplelines': [str(multiplelines)],    # lowercase
-                'internetservice': [str(internetservice)], # lowercase
-                'onlinesecurity': [str(onlinesecurity)],  # lowercase
-                'onlinebackup': [str(onlinebackup)],      # lowercase
-                'deviceprotection': [str(deviceprotection)], # lowercase
-                'techsupport': [str(techsupport)],        # lowercase
-                'streamingtv': [str(streamingtv)],        # lowercase
-                'streamingmovies': [str(streamingmovies)], # lowercase
-                'contract': [str(contract)],              # lowercase
-                'paperlessbilling': [str(paperlessbilling)], # lowercase
-                'paymentmethod': [str(paymentmethod)],    # lowercase
-                'monthlycharges': [float(monthlycharges)], # lowercase
-                'totalcharges': [float(totalcharges)]     # lowercase
-            }
-            # Buat DataFrame
-            dummy = pd.DataFrame(input_data)
+            # Ambil 1 row dari X_train sebagai template
+            dummy = X_train.iloc[[0]].copy()
             
-            # Pastikan urutan kolom sesuai X_train
-            dummy = dummy[X_train.columns]
+            # Update dengan input user (pastikan nama kolom lowercase)
+            idx = dummy.index[0]
+            
+            dummy.at[idx, 'gender'] = str(gender).strip()
+            dummy.at[idx, 'seniorcitizen'] = int(senior)
+            dummy.at[idx, 'partner'] = str(partner).strip()
+            dummy.at[idx, 'dependents'] = str(dependents).strip()
+            dummy.at[idx, 'tenure'] = int(tenure)
+            dummy.at[idx, 'phoneservice'] = str(phoneservice).strip()
+            dummy.at[idx, 'multiplelines'] = str(multiplelines).strip()
+            dummy.at[idx, 'internetservice'] = str(internetservice).strip()
+            dummy.at[idx, 'onlinesecurity'] = str(onlinesecurity).strip()
+            dummy.at[idx, 'onlinebackup'] = str(onlinebackup).strip()
+            dummy.at[idx, 'deviceprotection'] = str(deviceprotection).strip()
+            dummy.at[idx, 'techsupport'] = str(techsupport).strip()
+            dummy.at[idx, 'streamingtv'] = str(streamingtv).strip()
+            dummy.at[idx, 'streamingmovies'] = str(streamingmovies).strip()
+            dummy.at[idx, 'contract'] = str(contract).strip()
+            dummy.at[idx, 'paperlessbilling'] = str(paperlessbilling).strip()
+            dummy.at[idx, 'paymentmethod'] = str(paymentmethod).strip()
+            dummy.at[idx, 'monthlycharges'] = float(monthlycharges)
+            dummy.at[idx, 'totalcharges'] = float(totalcharges)
             
             # Predict
             prediction = model.predict(dummy)[0]
@@ -247,6 +244,7 @@ with tab1:
             
             churn_prob = probability[1]
             no_churn_prob = probability[0]
+
             
         except Exception as e:
             st.error(f"⚠️ Prediction Error: {str(e)}")
